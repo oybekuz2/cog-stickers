@@ -82,6 +82,10 @@ class Predictor(BasePredictor):
     def predict(
         self,
         prompt: str = Input(default="a cute cat"),
+        image: Path = Input(
+            description="An image to be converted to a sticker (img2img)",
+            default=None,
+        ),
         negative_prompt: str = Input(
             default="",
             description="Things you do not want in the image",
@@ -104,6 +108,8 @@ class Predictor(BasePredictor):
             seed = random.randint(0, 2**32 - 1)
             print(f"Random seed set to: {seed}")
 
+        filename = self.handle_input_file(image)
+        
         workflow = json.loads(workflow_json)
 
         self.update_workflow(
@@ -115,6 +121,7 @@ class Predictor(BasePredictor):
             negative_prompt,
             seed,
             upscale_steps,
+            filename=filename,
             is_upscale=upscale,
         )
 
